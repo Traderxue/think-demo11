@@ -5,6 +5,7 @@ namespace app\controller;
 use app\BaseController;
 use think\Request;
 use app\model\UserMining as UserMiningModel;
+use app\model\Mining as MiningModel;
 use app\util\Res;
 
 class UserMining extends BaseController
@@ -19,12 +20,20 @@ class UserMining extends BaseController
     public function add(Request $request)
     {
         $post = $request->post();
+        $currentDateTime = date("Y-m-d  H:i:s");
+
+        $expirationTime = date("Y-m-d H:i:s", strtotime($currentDateTime . " +30 days"));
+
+        $mining  = MiningModel::where("id", $post["mining_id"])->find();
+
+        $profit = ($mining->rate * $mining->price) * $post["num"];
 
         $user_mining = new UserMiningModel([
             "u_id" => $post["u_id"],
             "mining_id" => $post["mining_id"],
-            "buy_time" => $post["buy_time"],
-            "profit" => $post["profit"],
+            "buy_time" => date("Y-m-d H:i:s"),
+            "maturity_time" => $expirationTime,
+            "profit" => $profit,
             "num" => $post["num"]
         ]);
 
@@ -42,9 +51,8 @@ class UserMining extends BaseController
         $pageSize = $request->param("pageSize");
         $list = UserMiningModel::paginate([
             "page" => $page,
-            "lsit_rows" => $pageSize
+            "list_rows" => $pageSize
         ]);
         return $this->result->success("获取数据成功", $list);
     }
-    
 }
