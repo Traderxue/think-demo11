@@ -69,16 +69,23 @@ class User extends BaseController
         return $this->result->error("用户禁用失败");
     }
 
-    public function getById(Request $request){
+    public function getById($id)
+    {
+        $user = UserModel::where("id", $id)->find();
+        return $this->result->success("获取数据成功", $user);
+    }
+
+    public function page(Request $request)
+    {
         $page = $request->param("page");
         $pageSize = $request->param("pageSzie");
         $username = $request->param("username");
 
-        $list = UserModel::where("username","like","%{$username}%")->paginate([
-            "page"=>$page,
-            "list_rows"=>$pageSize
+        $list = UserModel::where("username", "like", "%{$username}%")->paginate([
+            "page" => $page,
+            "list_rows" => $pageSize
         ]);
 
-        return $this->result->success("获取数据成功",$list);
+        return $this->result->success("获取数据成功", $list);
     }
 }
