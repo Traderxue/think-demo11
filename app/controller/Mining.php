@@ -34,4 +34,46 @@ class Mining extends MiningModel
         }
         return $this->result->error("添加矿机失败");
     }
+
+    public function remove($id)
+    {
+        $mining = MiningModel::where("id", $id)->find();
+        $res = $mining->save([
+            "status" => 1
+        ]);
+
+        if ($res) {
+            return $this->result->success("矿机已下架", $res);
+        }
+        return $this->result->error("数据编辑失败");
+    }
+
+    public function page(Request $request)
+    {
+        $page = $request->param("page");
+        $pageSize = $request->param("pageSize");
+        $name = $request->param("name");
+
+        $list = MiningModel::where("name", $name)->paginate([
+            "page" => $page,
+            "list_rows" => $pageSize
+        ]);
+
+        return $this->result->success("获取数据成功", $list);
+    }
+
+    public function edit(Request $request)
+    {
+        $post = $request->post();
+        $mining = MiningModel::where("id", $post["id"])->find();
+
+        $res = $mining->save([
+            "avatar" => $post["avatar"]
+        ]);
+
+        if ($res) {
+            return $this->result->success("编辑数据成功", $res);
+        }
+        return $this->result->error("编辑数据失败");
+    }
 }
