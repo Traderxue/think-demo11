@@ -5,6 +5,7 @@ namespace app\controller;
 use app\BaseController;
 use think\Request;
 use app\model\User as UserModel;
+use app\controller\Upload;
 use app\util\Res;
 
 class User extends BaseController
@@ -87,5 +88,32 @@ class User extends BaseController
         ]);
 
         return $this->result->success("获取数据成功", $list);
+    }
+
+    public function edit(Request $request)
+    {
+
+        $post = $request->post();
+
+        $upload = new Upload();
+
+        $url = $upload->index();
+
+        if (!$url) {
+            return $this->result->error('上传图片失败');
+        }
+
+        $user = new UserModel([
+            "username" => $post["username"],
+            "email" => $post["email"],
+            "avator" => $url
+        ]);
+
+        $res = $user->save();
+
+        if ($res) {
+            return $this->result->success("修改资料成功", $user);
+        }
+        return $this->result->error("修改资料失败");
     }
 }
