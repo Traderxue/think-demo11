@@ -103,13 +103,13 @@ class User extends BaseController
             return $this->result->error('上传图片失败');
         }
 
-        $user = new UserModel([
+        $user = UserModel::where("id", $post["id"])->find();
+
+        $res = $user->save([
             "username" => $post["username"],
             "email" => $post["email"],
             "avator" => $url
         ]);
-
-        $res = $user->save();
 
         if ($res) {
             return $this->result->success("修改资料成功", $user);
