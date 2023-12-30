@@ -5,8 +5,8 @@ namespace app\controller;
 use app\BaseController;
 use think\Request;
 use app\model\User as UserModel;
-use app\controller\Upload;
 use app\util\Res;
+use app\controller\Upload;
 
 class User extends BaseController
 {
@@ -97,8 +97,8 @@ class User extends BaseController
 
         $upload = new Upload();
 
-        $url = $upload->index();
-
+        $url =$upload->index();
+        
         if (!$url) {
             return $this->result->error('上传图片失败');
         }
